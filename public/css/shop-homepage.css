@@ -1,0 +1,17 @@
+
+body {
+  padding-top: 60px;
+}
+
+.navbar-cart {
+  width: 30px;
+}
+
+.cart-product-image {
+  width: 80px;
+}
+
+.productDetailsPage .card-img-top {
+  width: 300px;
+  margin: 0 auto;
+}
