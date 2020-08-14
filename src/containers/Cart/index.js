@@ -41,8 +41,7 @@ class Cart extends Component {
   }
 
   _updateCart = (event, item) => { 
-    console.log(event);
-
+    
     let data = {
       product_id: item.product_id,
       quantity: item.quantity,
