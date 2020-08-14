@@ -9,7 +9,6 @@ class Cart extends Component {
     super(props);
     this.state = {
       cart_items: [],
-      showForm: false, 
     };
   }
 
