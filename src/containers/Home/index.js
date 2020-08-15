@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
 
+import SweetAlert from 'react-bootstrap-sweetalert';
+
 import { getProductList, addToCart, } from '../../actions'
 
+import Loader from '../../components/Loader';
 import ProductItem from '../../components/ProductItem';
 
 class Home extends Component {
@@ -10,11 +13,17 @@ class Home extends Component {
     super(props);
     this.state = {
       products: [],
+      success: true,
+      show: false,
+      message: '',
+      showLoader: true,
     };
   }
 
   componentDidMount() { 
     this._getProductList();
+
+    this.props.getCartItemsHandler();
   }
 
   _addToCart = (item) => { 
@@ -25,7 +34,11 @@ class Home extends Component {
     addToCart(data).then(response => {
       this.props.getCartItemsHandler();
 
-      alert(response.message);
+      this.setState({
+        show: true,
+        success: response.success,
+        message: response.message,
+      });
     });
   }
 
@@ -35,15 +48,31 @@ class Home extends Component {
       .then(response => {
         this.setState({
           products: response.data || [],
+          showLoader: false,
         });
       });
   };
 
+  onConfirm = () => {
+    this.setState({
+      show: false,
+      success: true,
+      message: '',
+    });
+  }
+
   render() {
-    const { products } = this.state;
-    
+    const { products, show, message, success, showLoader, } = this.state;
+
     return (
       <div className="homePage mt-4">
+        <SweetAlert
+          title={success ? `Success!` : `Error!`}
+          onConfirm={this.onConfirm}
+          show={show}
+        >
+            <h3>{ message }</h3>
+        </SweetAlert>
         <div className="row">
         <div className="col-lg-12">
           <h2>Pizza List</h2>
@@ -52,9 +81,15 @@ class Home extends Component {
         <div className="row">
           <div className="col-lg-12">
             <div className="row">
+
               {
-                products.map(item => <ProductItem item={item} key={item.id} handleAddToCart={this._addToCart} />)
+                showLoader && <Loader />
               }
+
+              {
+                !showLoader && products.map(item => <ProductItem item={item} key={item.id} handleAddToCart={this._addToCart} />)
+              }
+
             </div>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom';
+import SweetAlert from 'react-bootstrap-sweetalert';
 
 import { removeFromCart, addToCart, } from '../../actions'
 
@@ -9,6 +10,9 @@ class Cart extends Component {
     super(props);
     this.state = {
       cart_items: [],
+      success: true,
+      show: false,
+      message: '',
     };
   }
 
@@ -57,19 +61,40 @@ class Cart extends Component {
       cart_id: cartItem.id,
     };
 
-    removeFromCart(data).then(response => {
-      this.props.getCartItemsHandler();
+    removeFromCart(data).then(response => { 
+      if (response.success) {
+        this.props.getCartItemsHandler();
+      }
 
-      alert(response.message);
+      this.setState({
+        show: true,
+        success: response.success,
+        message: response.message,
+      });
+    });
+  }
+
+  onConfirm = () => {
+    this.setState({
+      show: false,
+      success: true,
+      message: '',
     });
   }
 
   render() {
-    const { cart_items } = this.state;
-    let shippingCost = 100.00, subtotal = 0;
+    const { cart_items, show, message, success, } = this.state;
+    let shippingCost = 10.00, subtotal = 0, currency = '$';
 
     return (
       <div className="cartPage">
+        <SweetAlert
+          title={success ? `Success!` : `Error!`}
+          onConfirm={this.onConfirm}
+          show={show}
+        >
+            <h3>{ message }</h3>
+        </SweetAlert>
         <div className="row">
         <div className="col-lg-12">
           <h2>Cart Items</h2>
@@ -106,9 +131,9 @@ class Cart extends Component {
                             
                             <td><input type="number" min="1" value={ item.quantity } className="form-control w-75" name={`quantity_${item.id}`} onChange={(event) => this.onChangeHandler(event, index)} onBlur={(event) => this._updateCart(event, item) } /></td>
                             
-                            <td>{ item.unit_price }</td>
+                            <td>{ item.currency || `$` }{ item.unit_price }</td>
                             
-                            <td>{ Number.parseFloat(item.product_total).toFixed(2) }</td>
+                            <td>{ item.currency || `$` }{ Number.parseFloat(item.product_total).toFixed(2) }</td>
                             
                             <td>
                               <button type="button" className="btn btn-danger" onClick={() => this._removeFromCart(item)}>&times;</button>
@@ -119,30 +144,30 @@ class Cart extends Component {
                     }
                     <tr>
                       <td colSpan="5" className="text-right"><b>Sub-total</b></td>
-                      <td className="text-right"><b>{ Number.parseFloat(subtotal).toFixed(2) }</b></td>
+                  <td className="text-right"><b>{ currency }{ Number.parseFloat(subtotal).toFixed(2) }</b></td>
                       <td>&nbsp;</td>
                     </tr>
                     <tr>
                       <td colSpan="5" className="text-right"><b>VAT (15%)</b></td>
-                      <td className="text-right"><b>{ Number.parseFloat((subtotal * 15) / 100).toFixed(2) }</b></td>
+                  <td className="text-right"><b>{ currency }{ Number.parseFloat((subtotal * 15) / 100).toFixed(2) }</b></td>
                       <td>&nbsp;</td>
                     </tr>
                     <tr>
                       <td colSpan="5" className="text-right"><b>Shipping cost</b></td>
-                      <td className="text-right"><b>{ shippingCost }</b></td>
+                  <td className="text-right"><b>{ currency }{ shippingCost }</b></td>
                       <td>&nbsp;</td>
                     </tr>
 
                     <tr>
                       <td colSpan="5" className="text-right"><b>Total</b></td>
-                      <td className="text-right"><b>{ Number.parseFloat(subtotal + ((subtotal * 15) / 100) + shippingCost).toFixed(2) }</b></td>
+                  <td className="text-right"><b>{ currency }{ Number.parseFloat(subtotal + ((subtotal * 15) / 100) + shippingCost).toFixed(2) }</b></td>
                       <td>&nbsp;</td>
                     </tr>
                     <tr>
                       <td colSpan="7" className="text-right">
                         <Link to="/" className="btn btn-info">Continue shopping</Link>
                         
-                        <Link to="/order" className="btn btn-primary ml-2">Checkout</Link>
+                        <Link to="/place-order" className="btn btn-primary ml-2">Checkout</Link>
                       </td>
                     </tr>
                   </tbody>

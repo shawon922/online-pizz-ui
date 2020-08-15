@@ -4,6 +4,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import AppRouter from './routes';
 import TopNavBar from './components/TopNavBar';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import './App.css'
 
 import { getCartItems, } from './actions'
 

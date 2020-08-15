@@ -61,3 +61,13 @@ export function placeOrder(data) {
       return (error && error.response && error.response.data) || {};
     });
 }
+
+export function getOrderList() { 
+  return API.get('/orders')
+    .then(response => {
+      return response.data;
+    })
+    .catch((error) => {
+      return (error && error.response && error.response.data) || {};
+    });
+};

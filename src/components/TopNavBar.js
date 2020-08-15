@@ -15,10 +15,10 @@ const TopNavBar = (props) => (
               <span className="sr-only">(current)</span>
             </Link>
           </li>
-          {/* <li className="nav-item">
-            <Link className="nav-link" to="/">About</Link>
-          </li>
           <li className="nav-item">
+            <Link className="nav-link" to="/order-list">My Order</Link>
+          </li>
+          {/* <li className="nav-item">
             <Link className="nav-link" to="/">Contact</Link>
           </li> */}
           <li className="nav-item">
