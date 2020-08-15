@@ -3,8 +3,21 @@ body {
   padding-top: 60px;
 }
 
+.navbar .container {
+  flex-wrap: nowrap !important;
+}
+
+.navbar-nav {
+  flex-direction: row !important;
+}
+
+.navbar-nav .nav-link {
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}
+
 .navbar-cart {
-  width: 30px;
+  width: 26px;
 }
 
 .cart-product-image {

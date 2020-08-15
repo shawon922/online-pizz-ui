@@ -32,7 +32,7 @@ class App extends Component {
   }
 
   render() { 
-    const { number_of_items, cart_items } = this.state;
+    const { number_of_items, cart_items, } = this.state;
 
     return (
       <Router>
