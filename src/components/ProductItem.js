@@ -26,7 +26,7 @@ class ProductItem extends Component {
             <h4 className="card-title">
               { item.title }
             </h4>
-            <h5>${ item.unit_price }</h5>
+            <h5>{ item.currency_symbol }{ item.currency_unit_price }</h5>
             <p className="card-text">{ item.description }</p>
           </div>
           <div className="card-footer">

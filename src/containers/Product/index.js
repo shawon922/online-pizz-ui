@@ -88,7 +88,7 @@ class Product extends Component {
               <img className="card-img-top img-fluid" src={ item.full_image_path } alt="" />
               <div className="card-body">
                 <h3 className="card-title">{ item.title }</h3>
-                <h4>{ item.currency || `$` }{ item.unit_price }</h4>
+                <h4>{ item.currency_symbol || `$` }{ item.currency_unit_price }</h4>
                 <p className="card-text">
                   { item.description }
                 </p>

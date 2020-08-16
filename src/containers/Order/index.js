@@ -94,7 +94,7 @@ class Order extends Component {
                             <td>{ item.billing_name }</td>                     
                             <td>{ item.billing_email }</td>                     
                             
-                            <td>{ item.currency || `$` }{ Number.parseFloat(item.total).toFixed(2) }</td>
+                            <td>{ item.currency_symbol }{ Number.parseFloat(item.total).toFixed(2) }</td>
                             <td>{ item.shipped ? `Delivered` : `Under processing` } </td>
                           </tr>
                         )

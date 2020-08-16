@@ -74,6 +74,11 @@ class Cart extends Component {
     });
   }
 
+  _onCurrencyChange = (e) => {
+    localStorage.setItem('currency_type', e.target.value);
+    this.props.getCartItemsHandler();
+  }
+
   onConfirm = () => {
     this.setState({
       show: false,
@@ -84,7 +89,8 @@ class Cart extends Component {
 
   render() {
     const { cart_items, show, message, success, } = this.state;
-    let shippingCost = 10.00, subtotal = 0, currency = '$';
+    let shippingCost = 10.00, subtotal = 0, currency =  '$';
+    let currency_type = localStorage.getItem('currency_type');
 
     return (
       <div className="cartPage">
@@ -104,74 +110,87 @@ class Cart extends Component {
           <div className="col-lg-12">
             <div className="row">
               { cart_items && cart_items.length > 0 ?
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th width="10%" scope="col">#</th>
-                      <th width="15%" scope="col">Image</th>
-                      <th width="20%" scope="col">Title</th>
-                      <th width="15%" scope="col">Quantity</th>
-                      <th width="15%" scope="col">Unit price</th>
-                      <th width="15%" scope="col">Product total</th>
-                      <th width="5%" scope="col">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {
-                      cart_items.map((item, index) => { 
-                        subtotal += Number.parseFloat(item.product_total);
+                <React.Fragment>
+                  <div className="col-sm-12">
+                    <div className="form-group row">
+                      <label htmlFor="currency" className="col-sm-2 col-form-label">Currency</label>
+                      <select defaultValue={currency_type} onChange={this._onCurrencyChange} className="form-control col-sm-2" id="currency">
+                        <option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                      </select>
+                    </div>
+                  </div>
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th width="10%" scope="col">#</th>
+                        <th width="15%" scope="col">Image</th>
+                        <th width="20%" scope="col">Title</th>
+                        <th width="15%" scope="col">Quantity</th>
+                        <th width="15%" scope="col">Unit price</th>
+                        <th width="15%" scope="col">Product total</th>
+                        <th width="5%" scope="col">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {
+                        cart_items.map((item, index) => { 
+                          currency = item.currency_symbol;
 
-                        return (
-                          <tr key={`${index}-${item.id}`}>
-                            <th scope="row">{ index + 1 }</th>
-                            
-                            <td><img src={ item.product.full_image_path } className="cart-product-image" alt="" /></td>
-                            
-                            <td>{ item.product.title }</td>
-                            
-                            <td><input type="number" min="1" value={ item.quantity } className="form-control w-75" name={`quantity_${item.id}`} onChange={(event) => this.onChangeHandler(event, index)} onBlur={(event) => this._updateCart(event, item) } /></td>
-                            
-                            <td>{ item.currency || `$` }{ item.unit_price }</td>
-                            
-                            <td>{ item.currency || `$` }{ Number.parseFloat(item.product_total).toFixed(2) }</td>
-                            
-                            <td>
-                              <button type="button" className="btn btn-danger" onClick={() => this._removeFromCart(item)}>&times;</button>
-                            </td>
-                          </tr>
-                        )
-                      })
-                    }
-                    <tr>
-                      <td colSpan="5" className="text-right"><b>Sub-total</b></td>
-                  <td className="text-right"><b>{ currency }{ Number.parseFloat(subtotal).toFixed(2) }</b></td>
-                      <td>&nbsp;</td>
-                    </tr>
-                    <tr>
-                      <td colSpan="5" className="text-right"><b>VAT (15%)</b></td>
-                  <td className="text-right"><b>{ currency }{ Number.parseFloat((subtotal * 15) / 100).toFixed(2) }</b></td>
-                      <td>&nbsp;</td>
-                    </tr>
-                    <tr>
-                      <td colSpan="5" className="text-right"><b>Shipping cost</b></td>
-                  <td className="text-right"><b>{ currency }{ shippingCost }</b></td>
-                      <td>&nbsp;</td>
-                    </tr>
+                          subtotal += Number.parseFloat(item.product_total);
 
-                    <tr>
-                      <td colSpan="5" className="text-right"><b>Total</b></td>
-                  <td className="text-right"><b>{ currency }{ Number.parseFloat(subtotal + ((subtotal * 15) / 100) + shippingCost).toFixed(2) }</b></td>
-                      <td>&nbsp;</td>
-                    </tr>
-                    <tr>
-                      <td colSpan="7" className="text-right">
-                        <Link to="/" className="btn btn-info">Continue shopping</Link>
-                        
-                        <Link to="/place-order" className="btn btn-primary ml-2">Checkout</Link>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                          return (
+                            <tr key={`${index}-${item.id}`}>
+                              <th scope="row">{ index + 1 }</th>
+                              
+                              <td><img src={ item.product.full_image_path } className="cart-product-image" alt="" /></td>
+                              
+                              <td>{ item.product.title }</td>
+                              
+                              <td><input type="number" min="1" value={ item.quantity } className="form-control w-75" name={`quantity_${item.id}`} onChange={(event) => this.onChangeHandler(event, index)} onBlur={(event) => this._updateCart(event, item) } /></td>
+                              
+                              <td className="text-right">{ item.currency_symbol || currency }{ item.unit_price }</td>
+                              
+                              <td className="text-right">{ item.currency_symbol || currency }{ Number.parseFloat(item.product_total).toFixed(2) }</td>
+                              
+                              <td>
+                                <button type="button" className="btn btn-danger" onClick={() => this._removeFromCart(item)}>&times;</button>
+                              </td>
+                            </tr>
+                          )
+                        })
+                      }
+                      <tr>
+                        <td colSpan="5" className="text-right"><b>Sub-total</b></td>
+                    <td className="text-right"><b>{ currency }{ Number.parseFloat(subtotal).toFixed(2) }</b></td>
+                        <td>&nbsp;</td>
+                      </tr>
+                      <tr>
+                        <td colSpan="5" className="text-right"><b>VAT (15%)</b></td>
+                    <td className="text-right"><b>{ currency }{ Number.parseFloat((subtotal * 15) / 100).toFixed(2) }</b></td>
+                        <td>&nbsp;</td>
+                      </tr>
+                      <tr>
+                        <td colSpan="5" className="text-right"><b>Shipping cost</b></td>
+                    <td className="text-right"><b>{ currency }{ shippingCost }</b></td>
+                        <td>&nbsp;</td>
+                      </tr>
+
+                      <tr>
+                        <td colSpan="5" className="text-right"><b>Total</b></td>
+                    <td className="text-right"><b>{ currency }{ Number.parseFloat(subtotal + ((subtotal * 15) / 100) + shippingCost).toFixed(2) }</b></td>
+                        <td>&nbsp;</td>
+                      </tr>
+                      <tr>
+                        <td colSpan="7" className="text-right">
+                          <Link to="/" className="btn btn-info">Continue shopping</Link>
+                          
+                          <Link to="/place-order" className="btn btn-primary ml-2">Checkout</Link>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </React.Fragment>
                 :
                 <div className="row w-100">
                   <h1 className="text-center w-100 mt-4">Cart is empty</h1>
